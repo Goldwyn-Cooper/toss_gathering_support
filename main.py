@@ -1,4 +1,5 @@
 def main():
+    import requests
     from src.sb import SupabaseClient
     from src.telegram import TelegramBot
     from src.finance import Finance
@@ -26,6 +27,9 @@ def main():
         else:
             bot.send_message('🫥 No Change')
         print(candidate.loc[:, ['score']])
+    except requests.exceptions.RequestException as e:
+        print(e.response.status_code)
+        print(e.response.reason)
     except Exception as e:
         print(type(e))
         print(e)
