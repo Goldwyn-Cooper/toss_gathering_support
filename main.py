@@ -11,22 +11,21 @@ def main():
         finance = Finance()
 
         candidate = supabase.fetch_candidate()
-        candidate['hold_prev'] = candidate.score > 0
-        candidate.score = candidate.index.map(finance.update_momentum).round(3)
-        candidate.sort_values('score', ascending=False, inplace=True)
+        candidate['score'] = candidate['symbol'].apply(finance.update_momentum).round(3)
+        # candidate.sort_values('score', ascending=False, inplace=True)
         candidate['hold'] = candidate.score > 0
         message = ''
+        candidate.set_index('symbol', inplace=True)
         for symbol, data in candidate.iterrows():
-            if data.hold and not data.hold_prev:
+            if data.hold:
                 message += f'✅ {symbol}\n'
-            elif not data.hold and data.hold_prev:
+            elif not data.hold:
                 message += f'❌ {symbol}\n'
-            supabase.update_score(symbol, data.score)
-        if message:
-            bot.send_message(message.strip())
-        else:
-            bot.send_message('🫥 No Change')
-        print(candidate.loc[:, ['score']])
+        # if message:
+        bot.send_message(message.strip())
+        # else:
+        #     bot.send_message('🫥 No Change')
+        print(candidate.loc[:, ['score', 'hold']])
     except requests.exceptions.RequestException as e:
         print(e.response.status_code)
         print(e.response.reason)

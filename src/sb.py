@@ -15,18 +15,19 @@ class SupabaseClient:
     
     def fetch_candidate(self) -> pd.DataFrame:
         query = self.client.table('TOSS_GATHERING')\
-                .select('*')
+                .select('symbol')
         result = query.execute()
-        return pd.DataFrame(result.data).set_index('symbol')
+        # return pd.DataFrame(result.data).set_index('symbol')
+        return pd.DataFrame(result.data)
     
-    def update_score(self, symbol: str, score: float) -> None:
-        query = self.client.table('TOSS_GATHERING')\
-                .update({
-                    'score': score,
-                }).eq('symbol', symbol)
-        return query.execute()
+    # def update_score(self, symbol: str, score: float) -> None:
+    #     query = self.client.table('TOSS_GATHERING')\
+    #             .update({
+    #                 'score': score,
+    #             }).eq('symbol', symbol)
+    #     return query.execute()
     
-if __name__ == "__main__":
+if __name__ == '__main__':
     from dotenv import load_dotenv
     load_dotenv()
     supabase = SupabaseClient()
