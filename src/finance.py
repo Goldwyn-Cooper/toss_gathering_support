@@ -4,17 +4,17 @@ import yfinance as yf
 import pandas as pd
 
 class Finance:
-    def __init__(self) -> None:
-        self.fibo = self.get_fibo(13)
+    @staticmethod
+    def gen_fibo(limit: int = 200):
+        a = b = 1
+        while True:
+            a, b = b, a + b
+            if b >= limit:
+                return
+            yield b
 
-    @staticmethod    
-    def get_fibo(n: int) -> list:
-        fibo = [0] * max(n+1, 3)
-        fibo[1] = 1
-        fibo[2] = 1
-        for i in range(3, n+1):
-            fibo[i] = fibo[i-1] + fibo[i-2]
-        return fibo[3:]
+    def __init__(self):
+        self.fibo = list(self.gen_fibo(60))
 
     @staticmethod
     def fetch_history(symbol: str) -> pd.DataFrame:
@@ -25,7 +25,7 @@ class Finance:
         price = self.fetch_history(symbol).Close
         momentum = []
         cal_momentum = lambda f:\
-            lambda x: (x.iloc[-1] / x.iloc[0] - 1) / f
+            lambda x: (x.iloc[-1] / x.iloc[0] - 1)
         for f in self.fibo:
             m = price.rolling(f)\
                 .apply(cal_momentum(f))\
