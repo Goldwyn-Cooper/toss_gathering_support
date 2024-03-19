@@ -17,7 +17,6 @@ class SupabaseClient:
         query = self.client.table('TOSS_GATHERING')\
                 .select('symbol')
         result = query.execute()
-        # return pd.DataFrame(result.data).set_index('symbol')
         return pd.DataFrame(result.data)
     
     # def update_score(self, symbol: str, score: float) -> None:
