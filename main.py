@@ -14,14 +14,16 @@ def main():
         candidate['score'] = candidate['symbol'].apply(finance.update_momentum).round(3)
         candidate['hold'] = candidate.score > 0
         candidate.set_index('symbol', inplace=True)
-        message = ''
-        for symbol, data in candidate.iterrows():
-            if data.hold:
-                message += f'✅ {symbol}\n'
-            elif not data.hold:
-                message += f'❌ {symbol}\n'
-        bot.send_message(message.strip())
-        print(candidate.loc[:, ['score', 'hold']])
+        for _, group in candidate.groupby('category'):
+            # print(group)
+            message = ''
+            for symbol, data in group.iterrows():
+                if data.hold:
+                    message += f'✅ {symbol}\n'
+                elif not data.hold:
+                    message += f'❌ {symbol}\n'
+            bot.send_message(message.strip())
+            print(group.loc[:, ['score', 'hold']])
     except requests.exceptions.RequestException as e:
         print(e.response.status_code)
         print(e.response.reason)

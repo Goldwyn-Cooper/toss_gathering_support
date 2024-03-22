@@ -15,7 +15,7 @@ class SupabaseClient:
     
     def fetch_candidate(self) -> pd.DataFrame:
         query = self.client.table('TOSS_GATHERING')\
-                .select('symbol')
+                .select('symbol', 'category')
         result = query.execute()
         return pd.DataFrame(result.data)
     
